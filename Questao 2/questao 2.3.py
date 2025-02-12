@@ -1,45 +1,27 @@
-medalhistas = []
-podio = []
+from collections import defaultdict
+
+gold_medals = defaultdict(int)
+silver_medals = defaultdict(int)
+bronze_medals = defaultdict(int)
 
 while True:
     try:
-        input()  # ignora o nome da modalidade
+        competition = input()
+        gold = input()
+        silver = input()
+        bronze = input()
         
-        for _ in range(3):
-            pais = input().strip()
-            podio.append(pais)
-        
-        for i in range(3):  # percorre o pódio
-            encontrado = False
-            for j in range(len(medalhistas)): # verifica se o país já está nos medalhistas
-                if medalhistas[j][0] == podio[i]:
-                    medalhistas[j][i + 1] += 1  # incrementa a medalha correspondente
-                    encontrado = True
-                    break
-            
-            if not encontrado:  # se o país não está nos medalhistas
-                nova_entrada = [podio[i], 0, 0, 0] # cria uma nova entrada com o país a ser adicionado
-                nova_entrada[i + 1] = 1 # incrementa a nova medalha correspondente
-                medalhistas.append(nova_entrada) # adiciona o país e suas medalhas
-        
-        podio.clear()  # Limpa o pódio para a próxima modalidade
+        gold_medals[gold] += 1
+        silver_medals[silver] += 1
+        bronze_medals[bronze] += 1
     except EOFError:
         break
 
-for i in range(len(medalhistas) - 1, -1, -1): # ordenação decrescente
-    for j in range(len(medalhistas) - 1): # trocar caso alguem com mais ouro estiver na frente
-        if medalhistas[j][1] < medalhistas[j+1][1]:  
-            medalhistas[j+1], medalhistas[j] = medalhistas[j], medalhistas[j+1]
-        elif medalhistas[j][1] == medalhistas[j+1][1]: # se os ouros forem iguais
-            if medalhistas[j][2] < medalhistas[j+1][2]: # trocar caso alguem com mais prata estiver na frente
-                medalhistas[j+1], medalhistas[j] = medalhistas[j], medalhistas[j+1]
-            elif medalhistas[j][2] == medalhistas[j+1][2]: # se as pratas forem iguais
-                if medalhistas[j][3] < medalhistas[j+1][3]: # trocar caso alguem com mais bronze estiver na frente
-                    medalhistas[j+1], medalhistas[j] = medalhistas[j], medalhistas[j+1]
-                elif medalhistas[j][3] == medalhistas[j+1][3]: # se os bronzes forem iguais
-                    if medalhistas[j][0] > medalhistas[j+1][0]: # ordena em ordem alfabética crescente
-                        medalhistas[j+1], medalhistas[j] = medalhistas[j], medalhistas[j+1]
+countries = set(gold_medals.keys()) | set(silver_medals.keys()) | set(bronze_medals.keys())
+medal_table = [(country, gold_medals[country], silver_medals[country], bronze_medals[country]) for country in countries]
+
+medal_table.sort(key=lambda x: (-x[1], -x[2], -x[3], x[0]))
 
 print("Quadro de Medalhas")
-for pais in medalhistas: # imprimindo o quadro de medalhas
-    print(*pais)
+for country, gold, silver, bronze in medal_table:
+    print(country, gold, silver, bronze)
